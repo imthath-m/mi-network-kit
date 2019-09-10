@@ -16,7 +16,7 @@ public protocol MINetworkable: MIRequestable {
 
     var session: URLSession { get }
 
-    // MARK:- methods to work with Custom MIRequest
+    // MARK:- methods to work with MIRequest
     
     func update(_ myRequest: MIRequest, expecting code: MIResponseStatusCode,
                 onCompletion handler: @escaping (Bool) -> Void)

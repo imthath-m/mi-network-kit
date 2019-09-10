@@ -9,11 +9,11 @@
 import Foundation
 
 public protocol MIRequestable {
-    func formRequest(baseURL: String, using method: NetworkMethod,
+    func formRequest(baseURL: String, using method: MINetworkMethod,
                      headers: [String: String]?, params: [String: Any]?, body: Data?) -> URLRequest?
 }
 
-public enum NetworkMethod: String {
+public enum MINetworkMethod: String {
     case get = "GET"
     case post = "POST"
     case put = "PUT"
@@ -22,7 +22,7 @@ public enum NetworkMethod: String {
 }
 
 extension MIRequestable {
-    public func formRequest(baseURL: String, using method: NetworkMethod,
+    public func formRequest(baseURL: String, using method: MINetworkMethod,
                               headers: [String: String]?, params: [String: Any]?, body: Data?) -> URLRequest? {
 
         guard let url = URL(string: getFullURL(from: params, usingBaseURL: baseURL)) else {

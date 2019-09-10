@@ -1,5 +1,5 @@
 //
-//  NetworkUploader.swift
+//  MIUploader.swift
 //  UtilitiesExample
 //
 //  Created by Imthath M on 29/07/19.
@@ -8,38 +8,38 @@
 
 import Foundation
 
-internal protocol NetworkUploaderDelegate: class {
+public protocol MIUploaderDelegate: class {
     func uploaded(fraction: Float)
 }
 
 /// Use NetworkUploaderDelegate to stream the progress and get the percentage of file uploaded
-internal class NetworkUploader: NSObject, MINetworkable, URLSessionTaskDelegate {
+public class MIUploader: NSObject, MINetworkable, URLSessionTaskDelegate {
 
-    weak var delegate: NetworkUploaderDelegate?
+    weak private var delegate: MIUploaderDelegate?
 
-    internal init(delegate: NetworkUploaderDelegate) {
+    public init(delegate: MIUploaderDelegate) {
         self.delegate = delegate
     }
-
-    lazy internal var session = {
+    
+    lazy public var session = {
         URLSession(configuration: .default, delegate: self, delegateQueue: .main)
     }()
 
-    internal func uploadFile(from url: URL, using request: URLRequest,
+    public func uploadFile(from url: URL, using request: URLRequest,
                            onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
         session.uploadTask(with: request, fromFile: url) { data, response, error in
             handler(self.process(data, response, error))
             }.resume()
     }
 
-    internal func uploadData(_ data: Data?, using request: URLRequest,
+    public func uploadData(_ data: Data?, using request: URLRequest,
                            onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
         session.uploadTask(with: request, from: data) { data, response, error in
             handler(self.process(data, response, error))
             }.resume()
     }
 
-    internal func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64,
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64,
                            totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         delegate?.uploaded(fraction: Float(totalBytesSent / totalBytesExpectedToSend))
     }

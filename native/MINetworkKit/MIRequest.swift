@@ -10,7 +10,7 @@ import Foundation
 
 public protocol MIRequest {
     var urlString: String { get }
-    var method: NetworkMethod { get }
+    var method: MINetworkMethod { get }
     var params: [String: Any]? { get }
     var headers: [String: String]? { get }
     var body: Data? { get }
@@ -30,24 +30,3 @@ internal extension MIRequest {
         return dict
     }
 }
-
-//internal class ZDResponse<DataType: Codable>: Codable {
-//
-//    var data: [DataType] = []
-//
-//    internal init() { }
-//    
-//}
-//
-//internal class ZDResponseData {
-//    
-//    static func handle<AnyDecodable: Codable>(_ result: Result<ZDResponse<AnyDecodable>, MINetworkError>, as type: [AnyDecodable],
-//                                              onCompletion handler: @escaping (Result<[AnyDecodable], MINetworkError>) -> Void) {
-//        switch result {
-//        case .success(let response):
-//            handler(.success(response.data))
-//        case .failure(let error):
-//            handler(.failure(error))
-//        }
-//    }
-//}
