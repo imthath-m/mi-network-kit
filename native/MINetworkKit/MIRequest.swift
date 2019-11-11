@@ -16,6 +16,14 @@ public protocol MIRequest {
     var body: Data? { get }
 }
 
+public enum MINetworkMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case delete = "DELETE"
+    case patch = "PATCH"
+}
+
 internal extension MIRequest {
 
     func dictionary(from tuples: [(String, Any?)]) -> [String: Any] {

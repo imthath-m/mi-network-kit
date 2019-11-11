@@ -24,7 +24,8 @@ public protocol MINetworkable: MIRequestable {
     func request<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable],
                                           onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
     
-    func send(_ myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
+    func send(_ myRequest: MIRequest,
+              onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
     
     func formURLRequest(basedOn request: MIRequest,
                         onCompletion handler: @escaping (Result<URLRequest, MINetworkError>) -> Void)
@@ -62,6 +63,8 @@ public protocol MINetworkable: MIRequestable {
 }
 
 public extension MINetworkable {
+    
+    var session: URLSession { URLSession.shared }
 
     func getTaskAndSend(_ request: URLRequest,
                                onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) -> URLSessionTask {
@@ -216,9 +219,7 @@ public extension MINetworkable {
     func formURLRequest(basedOn request: MIRequest,
                         onCompletion handler: @escaping (Result<URLRequest, MINetworkError>) -> Void) {
         
-        guard let urlRequest = formRequest(baseURL: request.urlString, using: request.method,
-                                           headers: request.headers, params: request.params,
-                                           body: request.body) else {
+        guard let urlRequest = getURLrequest(from: request) else {
                                             handler(.failure(.badURL))
                                             return
         }

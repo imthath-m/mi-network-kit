@@ -11,10 +11,11 @@ import Foundation
 public enum MINetworkError: Error {
     /// when URL initialization from String fails
     case badURL
-    case noInternet
 
     /// when server fails to parse URLRequest
     case badRequest
+    
+    case noInternet
     case timedOut
     case notFound
     case accessDenied
@@ -26,6 +27,7 @@ public enum MINetworkError: Error {
 }
 
 extension MINetworkError {
+    
     internal static func parse(error: NSError) -> MINetworkError {
         guard error.domain == NSURLErrorDomain else {
             return .unknownError("\(error)")
