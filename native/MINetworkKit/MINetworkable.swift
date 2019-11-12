@@ -21,8 +21,8 @@ public protocol MINetworkable: MIRequestable {
     func update(_ myRequest: MIRequest, expecting code: MIResponseStatusCode,
                 onCompletion handler: @escaping (Bool) -> Void)
     
-    func request<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable],
-                                          onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
+    func send<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable],
+                                       onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
     
     func send(_ myRequest: MIRequest,
               onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
@@ -190,19 +190,19 @@ public extension MINetworkable {
             }
         }
     }
-    
-    func request<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable],
-                                                   onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void) {
-        self.formURLRequest(basedOn: myRequest) { result in
-            switch result {
-            case .success(let request):
-                self.session.dataTask(with: request) { data, response, error in
-                    handler(self.parse(data, response, error))
-                    }.resume()
-            case .failure(let error):
-                handler(.failure(error))
-            }
+        
+    func send<T: Decodable>(_ myRequest: MIRequest,
+                            returns responseAs: [T],
+                            onCompletion handler: @escaping (Result<T, MINetworkError>) -> Void) {
+        
+        guard let request = getURLrequest(from: myRequest) else {
+            handler(.failure(.badURL))
+            return
         }
+        
+        session.dataTask(with: request) { data, response, error in
+            handler(self.parse(data, response, error))
+        }.resume()
     }
     
     func send(_ myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
