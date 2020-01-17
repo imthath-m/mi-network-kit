@@ -27,8 +27,10 @@ extension Encodable {
 }
 extension String {
 
-    public func log() {
-        print(self)
+    internal func log(file: String = #file,
+                      functionName: String = #function,
+                      lineNumber: Int = #line) {
+        print("\(URL(fileURLWithPath: file).lastPathComponent)-\(functionName):\(lineNumber)  \(self)")
     }
 
     public var encoded: String? {
