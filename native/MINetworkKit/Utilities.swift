@@ -9,11 +9,11 @@
 import Foundation
 
 extension Encodable {
-
+    
     public var jsonData: Data? {
         return try? JSONEncoder().encode(self)
     }
-
+    
     public var jsonString: String? {
         do {
             let encoder = JSONEncoder()
@@ -23,23 +23,30 @@ extension Encodable {
             return nil
         }
     }
-
+    
 }
-extension String {
 
-    internal func log(file: String = #file,
-                      functionName: String = #function,
-                      lineNumber: Int = #line) {
+extension String {
+    
+    public func log(file: String = #file,
+                    functionName: String = #function,
+                    lineNumber: Int = #line) {
         print("\(URL(fileURLWithPath: file).lastPathComponent)-\(functionName):\(lineNumber)  \(self)")
     }
-
+    
+    public func assertFailure(file: String = #file,
+                              functionName: String = #function,
+                              lineNumber: Int = #line) {
+        assertionFailure("\(URL(fileURLWithPath: file).lastPathComponent)-\(functionName):\(lineNumber)  \(self)")
+    }
+    
     public var encoded: String? {
         let characterSet = CharacterSet(charactersIn: "=+&:,'\"#%/<>?@\\^`{|} ")
-
+        
         if let result = self.addingPercentEncoding(withAllowedCharacters: characterSet.inverted) {
             return result
         }
-
+        
         return nil
     }
 }
@@ -51,7 +58,7 @@ extension Debuggable {
 }
 
 extension Optional {
-
+    
     public var isNil: Bool {
         switch self {
         case .none:
@@ -63,7 +70,7 @@ extension Optional {
 }
 
 extension Optional where Wrapped == Bool {
-
+    
     public var value: Bool {
         switch self {
         case .none:
