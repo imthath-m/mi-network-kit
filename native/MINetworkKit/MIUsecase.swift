@@ -52,20 +52,15 @@ public extension MIUsecase {
 
 }
 
-public class GetObject<T: Codable>: MIUsecase {
+public class GetObject<T: Codable>: MIUsecase, MINetworkable {
     
     public typealias MIUsecaseRequest = MIRequest
     
     public typealias MIUsecaseResponse = Result<T, MINetworkError>
     
-    private let network: MINetworkable
-    
-    public init(network: MINetworkable) {
-        self.network = network
-    }
-    
-    public func execute(_ request: MIRequest, and callback: @escaping (Result<T, MINetworkError>) -> Void) {
-        network.send(request, returns: [T](), onCompletion: callback)
+    public func execute(_ request: MIRequest,
+                        and callback: @escaping (Result<T, MINetworkError>) -> Void) {
+        send(request, returns: [T](), onCompletion: callback)
     }
 }
 
@@ -77,14 +72,12 @@ public class GetStatusCode: MIUsecase, MINetworkable {
     
     private let statusCode: MIResponseStatusCode
     
-    private let network: MINetworkable
-    
-    public init(network: MINetworkable, code: MIResponseStatusCode) {
-        self.network = network
+    public init(code: MIResponseStatusCode) {
         self.statusCode = code
     }
 
-    public func execute(_ request: MIRequest, and callback: @escaping (Bool) -> Void) {
-        network.update(request, expecting: statusCode, onCompletion: callback)
+    public func execute(_ request: MIRequest,
+                        and callback: @escaping (Bool) -> Void) {
+        update(request, expecting: statusCode, onCompletion: callback)
     }
 }
