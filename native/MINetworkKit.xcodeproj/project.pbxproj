@@ -16,6 +16,7 @@
 		A84FC52623264F680022CF8C /* MINetworkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84FC52223264F680022CF8C /* MINetworkResult.swift */; };
 		A84FC52723264F680022CF8C /* MINetworkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84FC52323264F680022CF8C /* MINetworkable.swift */; };
 		A84FC52923264FF40022CF8C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84FC52823264FF40022CF8C /* Utilities.swift */; };
+		A887576323D16A7200CC4504 /* MIUsecase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A887576223D16A7200CC4504 /* MIUsecase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		A84FC52223264F680022CF8C /* MINetworkResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MINetworkResult.swift; sourceTree = "<group>"; };
 		A84FC52323264F680022CF8C /* MINetworkable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MINetworkable.swift; sourceTree = "<group>"; };
 		A84FC52823264FF40022CF8C /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		A887576223D16A7200CC4504 /* MIUsecase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIUsecase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 		A84FC50623264F080022CF8C /* MINetworkKit */ = {
 			isa = PBXGroup;
 			children = (
+				A887576223D16A7200CC4504 /* MIUsecase.swift */,
 				A84FC52323264F680022CF8C /* MINetworkable.swift */,
 				A84FC52223264F680022CF8C /* MINetworkResult.swift */,
 				A84FC52123264F680022CF8C /* MINetworkUploader.swift */,
@@ -216,6 +219,7 @@
 				A84FC52923264FF40022CF8C /* Utilities.swift in Sources */,
 				A84FC51F23264F5E0022CF8C /* MIRequest.swift in Sources */,
 				A84FC52423264F680022CF8C /* MIRequestable.swift in Sources */,
+				A887576323D16A7200CC4504 /* MIUsecase.swift in Sources */,
 				A84FC52523264F680022CF8C /* MINetworkUploader.swift in Sources */,
 				A84FC52723264F680022CF8C /* MINetworkable.swift in Sources */,
 				A84FC52623264F680022CF8C /* MINetworkResult.swift in Sources */,

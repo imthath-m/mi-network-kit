@@ -29,14 +29,14 @@ public class MIUploader: NSObject, MINetworkable, URLSessionTaskDelegate {
                            onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
         session.uploadTask(with: request, fromFile: url) { data, response, error in
             handler(self.process(data, response, error))
-            }.resume()
+        }.resume()
     }
 
     public func uploadData(_ data: Data?, using request: URLRequest,
                            onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
         session.uploadTask(with: request, from: data) { data, response, error in
             handler(self.process(data, response, error))
-            }.resume()
+        }.resume()
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64,

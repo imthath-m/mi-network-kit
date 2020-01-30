@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "MINetworkKit"
-  spec.version      = "0.1.0"
+  spec.version      = "0.1.2"
   spec.summary      = "Networking made easy with enums and Codables"
 
   spec.description  = <<-DESC
@@ -36,7 +36,7 @@ Pod::Spec.new do |spec|
 
   spec.license      = { :type => 'MIT', :text => 'LICENSE' }
   
-  spec.author             = { "Imthath M" => "imthathullah.m@zohocorp.com" }
+  spec.author             = { "Imthath M" => "imthath.m@hotmail.com" }
   spec.social_media_url   = "https://twitter.com/imthath_m"
   
   spec.ios.deployment_target = "9.0"
