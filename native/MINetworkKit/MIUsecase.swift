@@ -58,6 +58,8 @@ public class GetObject<T: Codable>: MIUsecase, MINetworkable {
     
     public typealias MIUsecaseResponse = Result<T, MINetworkError>
     
+    public init() { }
+    
     public func execute(_ request: MIRequest,
                         and callback: @escaping (Result<T, MINetworkError>) -> Void) {
         send(request, returns: [T](), onCompletion: callback)
