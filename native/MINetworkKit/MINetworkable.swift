@@ -24,6 +24,7 @@ public protocol MINetworkable: MIRequestable {
     func send<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable],
                                        onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
     
+    func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
     
     func formURLRequest(basedOn request: MIRequest,
                         onCompletion handler: @escaping (Result<URLRequest, MINetworkError>) -> Void)
@@ -122,6 +123,19 @@ public extension MINetworkable {
             case .success(let request):
                 self.session.dataTask(with: request) { data, response, error in
                     handler(self.parse(data, response, error))
+                }.resume()
+            case .failure(let error):
+                handler(.failure(error))
+            }
+        }
+    }
+    
+    func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
+        self.formURLRequest(basedOn: myRequest) { result in
+            switch result {
+            case .success(let request):
+                self.session.dataTask(with: request) { data, response, error in
+                    handler(self.process(data, response, error))
                 }.resume()
             case .failure(let error):
                 handler(.failure(error))

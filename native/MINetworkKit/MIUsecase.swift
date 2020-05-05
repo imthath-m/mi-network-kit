@@ -69,6 +69,23 @@ public class GetObject<T: Codable>: MIUsecase {
     }
 }
 
+public class GetData: MIUsecase {
+    
+    public typealias MIUsecaseRequest = MIRequest
+    
+    public typealias MIUsecaseResponse = Result<Data, MINetworkError>
+    
+    private let network: MINetworkable
+    
+    public init(network: MINetworkable) {
+        self.network = network
+    }
+    
+    public func execute(_ request: MIRequest, and callback: @escaping (Result<Data, MINetworkError>) -> Void) {
+        network.getData(from: request, onCompletion: callback)
+    }
+}
+
 public class GetStatusCode: MIUsecase, MINetworkable {
     
     public typealias MIUsecaseRequest = MIRequest
