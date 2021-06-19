@@ -58,11 +58,39 @@ public class GetObject<T: Codable>: MIUsecase, MINetworkable {
     
     public typealias MIUsecaseResponse = Result<T, MINetworkError>
     
-    public init() { }
+    private let network: MINetworkable?
     
-    public func execute(_ request: MIRequest,
-                        and callback: @escaping (Result<T, MINetworkError>) -> Void) {
-        send(request, returns: [T](), onCompletion: callback)
+    public init(network: MINetworkable? = nil) {
+        self.network = network
+    }
+    
+    public func execute(_ request: MIRequest, and callback: @escaping (Result<T, MINetworkError>) -> Void) {
+        if let existingNetwork = network {
+            existingNetwork.send(request, returns: [T](), onCompletion: callback)
+        } else {
+            send(request, returns: [T](), onCompletion: callback)
+        }
+    }
+}
+
+public class GetData: MIUsecase, MINetworkable {
+    
+    public typealias MIUsecaseRequest = MIRequest
+    
+    public typealias MIUsecaseResponse = Result<Data, MINetworkError>
+    
+    private let network: MINetworkable?
+    
+    public init(network: MINetworkable? = nil) {
+        self.network = network
+    }
+    
+    public func execute(_ request: MIRequest, and callback: @escaping (Result<Data, MINetworkError>) -> Void) {
+        if let existingNetwork = network {
+            existingNetwork.getData(from: request, onCompletion: callback)
+        } else {
+            getData(from: request, onCompletion: callback)
+        }
     }
 }
 
@@ -74,12 +102,18 @@ public class GetStatusCode: MIUsecase, MINetworkable {
     
     private let statusCode: MIResponseStatusCode
     
-    public init(code: MIResponseStatusCode) {
+    private let network: MINetworkable?
+    
+    public init(network: MINetworkable? = nil, code: MIResponseStatusCode) {
+        self.network = network
         self.statusCode = code
     }
 
-    public func execute(_ request: MIRequest,
-                        and callback: @escaping (Bool) -> Void) {
-        update(request, expecting: statusCode, onCompletion: callback)
+    public func execute(_ request: MIRequest, and callback: @escaping (Bool) -> Void) {
+        if let existingNetwork = network {
+            existingNetwork.update(request, expecting: statusCode, onCompletion: callback)
+        } else {
+            update(request, expecting: statusCode, onCompletion: callback)
+        }
     }
 }
