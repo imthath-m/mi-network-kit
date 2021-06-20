@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol MIUploaderDelegate: class {
+public protocol MIUploaderDelegate: AnyObject {
     func uploaded(fraction: Float)
 }
 
