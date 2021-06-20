@@ -13,7 +13,7 @@ private let bgQueue = DispatchQueue(label: "MIUsecase")
 /// Provide implementation for the execute method and then
 /// call perform to get response in main thread
 /// call execute to get response in background thread
-public protocol MIUsecase: class {
+public protocol MIUsecase: AnyObject {
     associatedtype MIUsecaseRequest
     associatedtype MIUsecaseResponse
 
@@ -52,7 +52,7 @@ public extension MIUsecase {
 
 }
 
-public class GetObject<T: Codable>: MIUsecase, MINetworkable {
+open class GetObject<T: Codable>: MIUsecase, MINetworkable {
     
     public typealias MIUsecaseRequest = MIRequest
     
