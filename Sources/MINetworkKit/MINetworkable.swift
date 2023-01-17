@@ -103,9 +103,7 @@ public extension MINetworkable {
   func send<T: Decodable>(_ myRequest: MIRequest, returns responseAs: [T], onCompletion handler: @escaping (Result<T, MINetworkError>) -> Void) {
     do {
       let request = try getURLRequest(from: myRequest)
-      session.dataTask(with: request) { data, response, error in
-        handler(self.parse(data, response, error))
-      }.resume()
+      get(T.self, from: request, onCompletion: handler)
     } catch {
       "\(error)".log()
       handler(.failure(MINetworkError(error: error)))
