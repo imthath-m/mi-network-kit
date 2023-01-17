@@ -6,18 +6,18 @@ import Foundation
 
 // MARK: - Swift Concurrency alternatives with async throwing functions
 public extension MINetworkable {
-  func hit(_ myRequest: MIRequest, expecting code: MIResponseStatusCode) async throws -> Bool {
-    let request = try getURLRequest(from: myRequest)
+  func hit(_ myRequest: MIRequestable, expecting code: MIResponseStatusCode) async throws -> Bool {
+    let request = try myRequest.urlRequest()
     return try await hit(request, expecting: code)
   }
 
-  func get<T: Decodable>(from myRequest: MIRequest) async throws -> T {
-    let request = try getURLRequest(from: myRequest)
+  func get<T: Decodable>(from myRequest: MIRequestable) async throws -> T {
+    let request = try myRequest.urlRequest()
     return try await get(from: request)
   }
 
-  func getData(from myRequest: MIRequest) async throws -> Data {
-    let request = try getURLRequest(from: myRequest)
+  func getData(from myRequest: MIRequestable) async throws -> Data {
+    let request = try myRequest.urlRequest()
     return try await getData(from: request)
   }
 }

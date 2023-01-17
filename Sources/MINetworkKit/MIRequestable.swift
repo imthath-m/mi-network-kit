@@ -9,31 +9,50 @@
 import Foundation
 
 public protocol MIRequestable {
-  func getURLRequest(from myRequest: MIRequest) throws -> URLRequest
-
-  func getURLRequest(
-    baseURL: String,
-    using method: MINetworkMethod,
-    headers: [String: String]?,
-    params: [String: Any]?,
-    body: Data?
-  ) throws -> URLRequest
+  func urlRequest() throws -> URLRequest
 }
 
-public extension MIRequestable {
-  func getURLRequest(from myRequest: MIRequest) throws -> URLRequest {
-    try getURLRequest(
-      baseURL: myRequest.urlString,
-      using: myRequest.method,
-      headers: myRequest.headers,
-      params: myRequest.params,
-      body: myRequest.body
-    )
-  }
+extension URLRequest: MIRequestable {
+  public func urlRequest() throws -> URLRequest { self }
+}
 
-  func getURLRequest(baseURL: String, using method: MINetworkMethod, headers: [String: String]?, params: [String: Any]?, body: Data?) throws -> URLRequest {
-    guard let url = URL(string: getFullURL(from: params, usingBaseURL: baseURL)) else {
-      ("unable to form url with string " + baseURL).log()
+extension URL: MIRequestable {
+  public func urlRequest() throws -> URLRequest {
+    URLRequest(url: self)
+  }
+}
+
+extension String: MIRequestable {
+  public func urlRequest() throws -> URLRequest {
+    guard let url = URL(string: self) else {
+      ("unable to form url with string " + self).log()
+      throw MINetworkError.badURL
+    }
+    return URLRequest(url: url)
+  }
+}
+
+public enum MINetworkMethod: String {
+  case get = "GET"
+  case post = "POST"
+  case put = "PUT"
+  case delete = "DELETE"
+  case patch = "PATCH"
+}
+
+public protocol MIRequest: MIRequestable {
+  var urlString: String { get }
+  var method: MINetworkMethod { get }
+  var params: [String: Any]? { get }
+  var headers: [String: String]? { get }
+  var body: Data? { get }
+}
+
+public extension MIRequest {
+  func urlRequest() throws -> URLRequest {
+    let fullURL: String = getFullURL(from: params, usingBaseURL: urlString)
+    guard let url = URL(string: fullURL) else {
+      ("unable to form url with string " + urlString).log()
       throw MINetworkError.badURL
     }
 
@@ -43,7 +62,9 @@ public extension MIRequestable {
     request.httpBody = body
     return request
   }
+}
 
+private extension MIRequest {
   func getFullURL(from params: [String: Any]?, usingBaseURL baseURL: String) -> String {
     guard let existingParams = params else {
       return baseURL
@@ -57,7 +78,7 @@ public extension MIRequestable {
     return baseURL
   }
 
-  private func formattedParamString(from params: [String: Any]) -> String {
+  func formattedParamString(from params: [String: Any]) -> String {
     var paramString = ""
     for (key, value) in params {
       if let valueString = getValueString(from: value) {
@@ -68,14 +89,14 @@ public extension MIRequestable {
     return paramString
   }
 
-  private func getKeyString(from key: String, in paramString: String) -> String {
+  func getKeyString(from key: String, in paramString: String) -> String {
     if paramString.isEmpty {
       return key + "="
     }
     return "&" + key + "="
   }
 
-  private func getValueString(from value: Any) -> String? {
+  func getValueString(from value: Any) -> String? {
     if value is [String: Any] && JSONSerialization.isValidJSONObject(value) {
       if let jsonData = try? JSONSerialization.data(withJSONObject: value, options: []) {
         let jsonString = String(data: jsonData, encoding: .utf8)!

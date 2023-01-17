@@ -3,7 +3,7 @@ import XCTest
 
 final class MINetworkKitTests: XCTestCase, MINetworkable {
   func testAsyncNetworkCalls() async throws {
-    let posts: [Post] = try await get(from: TypicodeRequest.getPosts)
+    let posts: [Post] = try await get(from: "https://jsonplaceholder.typicode.com/posts")
     print(posts.count)
     XCTAssert(posts.count > 0)
 
@@ -11,7 +11,11 @@ final class MINetworkKitTests: XCTestCase, MINetworkable {
     print(albums.count)
     XCTAssert(albums.count > 0)
 
-    let comments: [Comment] = try await get(from: TypicodeRequest.getComments)
+    guard let commentsURL: URL = URL(string: "https://jsonplaceholder.typicode.com/comments") else {
+      XCTFail("Unable to form url")
+      return
+    }
+    let comments: [Comment] = try await get(from: commentsURL)
     print(comments.count)
     XCTAssert(comments.count > 0)
   }

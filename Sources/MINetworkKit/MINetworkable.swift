@@ -12,17 +12,17 @@ import Foundation
 
 public typealias MIResponseStatusCode = Int
 
-public protocol MINetworkable: MIRequestable {
+public protocol MINetworkable {
 
   var session: URLSession { get }
 
   // MARK:- methods to work with MIRequest
 
-  func update(_ myRequest: MIRequest, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void)
+  func update(_ myRequest: MIRequestable, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void)
 
-  func send<AnyDecodable: Decodable>(_ myRequest: MIRequest, returns responseAs: [AnyDecodable], onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
+  func send<AnyDecodable: Decodable>(_ myRequest: MIRequestable, returns responseAs: [AnyDecodable], onCompletion handler: @escaping (Result<AnyDecodable, MINetworkError>) -> Void)
 
-  func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
+  func getData(from myRequest: MIRequestable, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
 
   // MARK:- methods to work with Foundation's URLRequest
 
@@ -90,9 +90,9 @@ public extension MINetworkable {
 
 // MARK:- methods to work with MIRequest
 public extension MINetworkable {
-  func update(_ myRequest: MIRequest, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void) {
+  func update(_ myRequest: MIRequestable, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void) {
     do {
-      let request = try getURLRequest(from: myRequest)
+      let request = try myRequest.urlRequest()
       hit(request, expecting: code, onCompletion: handler)
     } catch {
       "\(error)".log()
@@ -100,9 +100,9 @@ public extension MINetworkable {
     }
   }
 
-  func send<T: Decodable>(_ myRequest: MIRequest, returns responseAs: [T], onCompletion handler: @escaping (Result<T, MINetworkError>) -> Void) {
+  func send<T: Decodable>(_ myRequest: MIRequestable, returns responseAs: [T], onCompletion handler: @escaping (Result<T, MINetworkError>) -> Void) {
     do {
-      let request = try getURLRequest(from: myRequest)
+      let request = try myRequest.urlRequest()
       get(T.self, from: request, onCompletion: handler)
     } catch {
       "\(error)".log()
@@ -110,9 +110,9 @@ public extension MINetworkable {
     }
   }
 
-  func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
+  func getData(from myRequest: MIRequestable, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
     do {
-      let request = try getURLRequest(from: myRequest)
+      let request = try myRequest.urlRequest()
       session.dataTask(with: request) { data, response, error in
         handler(self.process(data, response, error))
       }.resume()
