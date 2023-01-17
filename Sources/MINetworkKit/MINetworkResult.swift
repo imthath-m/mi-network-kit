@@ -27,7 +27,15 @@ public enum MINetworkError: Error {
 }
 
 extension MINetworkError {
-  internal static func parse(error: NSError) -> MINetworkError {
+  init(error: Error) {
+    if let error = error as? MINetworkError {
+      self = error
+    } else {
+      self = .unknownError(error.localizedDescription)
+    }
+  }
+
+  static func parse(error: NSError) -> MINetworkError {
     guard error.domain == NSURLErrorDomain else {
       return .unknownError("\(error)")
     }

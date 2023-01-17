@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol MIRequestable {
-  func getURLRequest(from myRequest: MIRequest) -> URLRequest?
+  func getURLRequest(from myRequest: MIRequest) throws -> URLRequest
 
   func getURLRequest(
     baseURL: String,
@@ -17,12 +17,12 @@ public protocol MIRequestable {
     headers: [String: String]?,
     params: [String: Any]?,
     body: Data?
-  ) -> URLRequest?
+  ) throws -> URLRequest
 }
 
 public extension MIRequestable {
-  func getURLRequest(from myRequest: MIRequest) -> URLRequest? {
-    getURLRequest(
+  func getURLRequest(from myRequest: MIRequest) throws -> URLRequest {
+    try getURLRequest(
       baseURL: myRequest.urlString,
       using: myRequest.method,
       headers: myRequest.headers,
@@ -31,10 +31,10 @@ public extension MIRequestable {
     )
   }
 
-  func getURLRequest(baseURL: String, using method: MINetworkMethod, headers: [String: String]?, params: [String: Any]?, body: Data?) -> URLRequest? {
+  func getURLRequest(baseURL: String, using method: MINetworkMethod, headers: [String: String]?, params: [String: Any]?, body: Data?) throws -> URLRequest {
     guard let url = URL(string: getFullURL(from: params, usingBaseURL: baseURL)) else {
       ("unable to form url with string " + baseURL).log()
-      return nil
+      throw MINetworkError.badURL
     }
 
     var request = URLRequest(url: url)

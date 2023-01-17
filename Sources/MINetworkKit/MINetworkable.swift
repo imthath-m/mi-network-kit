@@ -24,8 +24,6 @@ public protocol MINetworkable: MIRequestable {
 
   func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void)
 
-  func formURLRequest(basedOn request: MIRequest, onCompletion handler: @escaping (Result<URLRequest, MINetworkError>) -> Void)
-
   // MARK:- methods to work with Foundation's URLRequest
 
   func hit(_ request: URLRequest, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void)
@@ -93,51 +91,37 @@ public extension MINetworkable {
 // MARK:- methods to work with MIRequest
 public extension MINetworkable {
   func update(_ myRequest: MIRequest, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void) {
-    self.formURLRequest(basedOn: myRequest) { result in
-      switch result {
-      case .success(let request):
-        self.hit(request, expecting: code, onCompletion: handler)
-      case .failure(let error):
-        "\(error)".log()
-        handler(false)
-      }
+    do {
+      let request = try getURLRequest(from: myRequest)
+      hit(request, expecting: code, onCompletion: handler)
+    } catch {
+      "\(error)".log()
+      handler(false)
     }
   }
 
   func send<T: Decodable>(_ myRequest: MIRequest, returns responseAs: [T], onCompletion handler: @escaping (Result<T, MINetworkError>) -> Void) {
-    self.formURLRequest(basedOn: myRequest) { result in
-      switch result {
-      case .success(let request):
-        self.session.dataTask(with: request) { data, response, error in
-            handler(self.parse(data, response, error))
-          }
-          .resume()
-      case .failure(let error):
-        handler(.failure(error))
-      }
+    do {
+      let request = try getURLRequest(from: myRequest)
+      session.dataTask(with: request) { data, response, error in
+        handler(self.parse(data, response, error))
+      }.resume()
+    } catch {
+      "\(error)".log()
+      handler(.failure(MINetworkError(error: error)))
     }
   }
 
   func getData(from myRequest: MIRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
-    self.formURLRequest(basedOn: myRequest) { result in
-      switch result {
-      case .success(let request):
-        self.session.dataTask(with: request) { data, response, error in
-            handler(self.process(data, response, error))
-          }.resume()
-      case .failure(let error):
-        handler(.failure(error))
-      }
+    do {
+      let request = try getURLRequest(from: myRequest)
+      session.dataTask(with: request) { data, response, error in
+        handler(self.process(data, response, error))
+      }.resume()
+    } catch {
+      "\(error)".log()
+      handler(.failure(MINetworkError(error: error)))
     }
-  }
-
-  func formURLRequest(basedOn request: MIRequest, onCompletion handler: @escaping (Result<URLRequest, MINetworkError>) -> Void) {
-    guard let urlRequest = getURLRequest(from: request) else {
-      handler(.failure(.badURL))
-      return
-    }
-
-    handler(.success(urlRequest))
   }
 }
 
