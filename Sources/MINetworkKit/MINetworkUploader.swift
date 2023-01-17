@@ -3,44 +3,38 @@
 //  UtilitiesExample
 //
 //  Created by Imthath M on 29/07/19.
-//  Copyright © 2019 Zoho Corp. All rights reserved.
+//  Copyright © 2019 SkyDevz. All rights reserved.
 //
 
 import Foundation
 
 public protocol MIUploaderDelegate: AnyObject {
-    func uploaded(fraction: Float)
+  func uploaded(fraction: Float)
 }
 
 /// Use NetworkUploaderDelegate to stream the progress and get the percentage of file uploaded
 public class MIUploader: NSObject, MINetworkable, URLSessionTaskDelegate {
+  weak private var delegate: MIUploaderDelegate?
 
-    weak private var delegate: MIUploaderDelegate?
+  public init(delegate: MIUploaderDelegate) {
+    self.delegate = delegate
+  }
 
-    public init(delegate: MIUploaderDelegate) {
-        self.delegate = delegate
-    }
-    
-    lazy public var session = {
-        URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-    }()
+  lazy public var session: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
 
-    public func uploadFile(from url: URL, using request: URLRequest,
-                           onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
-        session.uploadTask(with: request, fromFile: url) { data, response, error in
-            handler(self.process(data, response, error))
-        }.resume()
-    }
+  public func uploadFile(from url: URL, using request: URLRequest, onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
+    session.uploadTask(with: request, fromFile: url) { data, response, error in
+        handler(self.process(data, response, error))
+      }.resume()
+  }
 
-    public func uploadData(_ data: Data?, using request: URLRequest,
-                           onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
-        session.uploadTask(with: request, from: data) { data, response, error in
-            handler(self.process(data, response, error))
-        }.resume()
-    }
+  public func uploadData(_ data: Data?, using request: URLRequest, uilonCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) {
+    session.uploadTask(with: request, from: data) { data, response, error in
+        handler(self.process(data, response, error))
+      }.resume()
+  }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64,
-                           totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        delegate?.uploaded(fraction: Float(totalBytesSent / totalBytesExpectedToSend))
-    }
+  public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    delegate?.uploaded(fraction: Float(totalBytesSent / totalBytesExpectedToSend))
+  }
 }
