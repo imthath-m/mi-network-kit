@@ -34,7 +34,7 @@ private extension MINetworkable {
 
   func get<AnyDecodable: Decodable>(from request: URLRequest) async throws -> AnyDecodable {
     let data: Data = try await getData(from: request)
-    return try JSONDecoder().decode(AnyDecodable.self, from: data)
+    return try decoder.decode(AnyDecodable.self, from: data)
   }
 
   func getData(from request: URLRequest) async throws -> Data {

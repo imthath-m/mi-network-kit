@@ -16,6 +16,8 @@ public protocol MINetworkable {
 
   var session: URLSession { get }
 
+  var decoder: JSONDecoder { get }
+
   // MARK:- methods to work with MIRequest
 
   func update(_ myRequest: MIRequestable, expecting code: MIResponseStatusCode, onCompletion handler: @escaping (Bool) -> Void)
@@ -53,6 +55,7 @@ public protocol MINetworkable {
 // MARK:- methods to work with Foundation's URLRequest
 public extension MINetworkable {
   var session: URLSession { URLSession.shared }
+  var decoder: JSONDecoder { JSONDecoder() }
 
   func getTaskAndSend(_ request: URLRequest,
                       onCompletion handler: @escaping (Result<Data, MINetworkError>) -> Void) -> URLSessionTask {
@@ -178,7 +181,7 @@ public extension MINetworkable {
     }
 
     do {
-      return .success(try JSONDecoder().decode(AnyDecodable.self, from: existingData))
+      return .success(try decoder.decode(AnyDecodable.self, from: existingData))
     } catch let error {
       return .failure(.decodingFailed(existingData, error))
     }
