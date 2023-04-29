@@ -45,17 +45,18 @@ private extension MINetworkable {
 
 private extension URLSession {
   func responseData(for request: URLRequest) async throws -> (Data, URLResponse) {
+    let (resultData, response): (Data, URLResponse)
     do {
-      let (data, response) = try await data(for: request)
-      guard let httpResponse = response as? HTTPURLResponse else {
-        throw MINetworkError.badResponse
-      }
-      guard (200...299).contains(httpResponse.statusCode) else {
-        throw MINetworkError.invalidStatusCode(httpResponse.statusCode)
-      }
-      return (data, response)
+      (resultData, response) = try await data(for: request)
     } catch {
       throw MINetworkError.parse(error: error as NSError)
     }
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw MINetworkError.badResponse
+    }
+    guard (200...299).contains(httpResponse.statusCode) else {
+      throw MINetworkError.invalidStatusCode(httpResponse.statusCode)
+    }
+    return (resultData, response)
   }
 }
