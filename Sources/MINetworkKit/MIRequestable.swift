@@ -46,9 +46,15 @@ public protocol MIRequest: MIRequestable {
   var params: [String: Any]? { get }
   var headers: [String: String]? { get }
   var body: Data? { get }
+  var cachePolicy: URLRequest.CachePolicy? { get }
 }
 
 public extension MIRequest {
+  var params: [String: Any]? { nil }
+  var headers: [String: String]? { nil }
+  var body: Data? { nil }
+  var cachePolicy: URLRequest.CachePolicy? { nil }
+
   func urlRequest() throws -> URLRequest {
     let fullURL: String = getFullURL(from: params, usingBaseURL: urlString)
     guard let url = URL(string: fullURL) else {
@@ -60,11 +66,12 @@ public extension MIRequest {
     request.httpMethod = method.rawValue
     request.allHTTPHeaderFields = headers
     request.httpBody = body
+    if let cachePolicy {
+      request.cachePolicy = cachePolicy
+    }
     return request
   }
-}
 
-private extension MIRequest {
   func getFullURL(from params: [String: Any]?, usingBaseURL baseURL: String) -> String {
     guard let existingParams = params else {
       return baseURL
@@ -77,7 +84,9 @@ private extension MIRequest {
 
     return baseURL
   }
+}
 
+private extension MIRequest {
   func formattedParamString(from params: [String: Any]) -> String {
     var paramString = ""
     for (key, value) in params {
