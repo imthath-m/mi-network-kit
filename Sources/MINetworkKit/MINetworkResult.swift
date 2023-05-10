@@ -15,6 +15,8 @@ public enum MINetworkError: Error {
   /// when server fails to parse URLRequest
   case badRequest
 
+  /// the request task was cancelled
+  case cancelled
   case noInternet
   case timedOut
   case notFound
@@ -38,6 +40,10 @@ extension MINetworkError {
   static func parse(error: NSError) -> MINetworkError {
     guard error.domain == NSURLErrorDomain else {
       return .unknownError("\(error)")
+    }
+
+    if error.code == NSURLErrorCancelled {
+      return .cancelled
     }
 
     if error.code == NSURLErrorNotConnectedToInternet ||
